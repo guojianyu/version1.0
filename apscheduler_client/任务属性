@@ -1,0 +1,217 @@
+
+{
+  "Body": {
+    "Task_Create": {
+      "note": [
+        "Darwin",
+        "czMacBook-Pro.local",
+        "16.0.0",
+        "Darwin Kernel Version 16.0.0: Mon Aug 29 17:56:20 PDT 2016; root:xnu-3789.1.32~3/RELEASE_X86_64",
+        "x86_64",
+        "i386"
+      ],
+      "version": "1.0.0",
+      "time": 1494311603.50142
+    },
+    "Block_Tasks": [
+      {
+        "EndPage": 1845,
+        "UpdateTime": 1494311604.01828,
+        "Task_Create": {
+          "note": [
+            "Darwin",
+            "czMacBook-Pro.local",
+            "16.0.0",
+            "Darwin Kernel Version 16.0.0: Mon Aug 29 17:56:20 PDT 2016; root:xnu-3789.1.32~3/RELEASE_X86_64",
+            "x86_64",
+            "i386"
+          ],
+          "version": "1.0.0",
+          "time": 1494311604.018282
+        },
+        "StartPage": 1,
+        "NextTime": null,
+        "EndTime": null,
+        "maxPage": 1846,
+        "StartTime": null,
+        "NextPage": 1
+      }
+    ],
+    "hotCommentTagStatistics": [
+      {
+        "rid": 15225,
+        "canBeFiltered": false,
+        "type": 0,
+        "id": 1504786,
+        "count": 383,
+        "modified": "2017-05-09 08:58:01",
+        "productId": 3938531,
+        "name": "\u5916\u89c2\u6f02\u4eae",
+        "status": 0,
+        "created": "2017-03-16 08:46:02"
+      },
+      {
+        "rid": 15227,
+        "canBeFiltered": false,
+        "type": 0,
+        "id": 1504733,
+        "count": 358,
+        "modified": "2017-05-09 09:25:39",
+        "productId": 3938531,
+        "name": "\u6027\u4ef7\u6bd4\u9ad8",
+        "status": 0,
+        "created": "2017-03-16 00:19:07"
+      },
+
+      {
+        "rid": 31389,
+        "canBeFiltered": false,
+        "type": 0,
+        "id": 1505191,
+        "count": 347,
+        "modified": "2017-05-09 08:59:05",
+        "productId": 3938531,
+        "name": "\u652f\u6301\u56fd\u4ea7",
+        "status": 0,
+        "created": "2017-03-16 13:56:58"
+      },
+      {
+        "rid": 15226,
+        "canBeFiltered": false,
+        "type": 0,
+        "id": 1505113,
+        "count": 308,
+        "modified": "2017-05-09 09:17:47",
+        "productId": 3938531,
+        "name": "\u7cfb\u7edf\u6d41\u7545",
+        "status": 0,
+        "created": "2017-03-16 12:46:18"
+      },
+      {
+        "rid": 15231,
+        "canBeFiltered": false,
+        "type": 0,
+        "id": 1505626,
+        "count": 269,
+        "modified": "2017-05-09 12:06:07",
+        "productId": 3938531,
+        "name": "\u529f\u80fd\u9f50\u5168",
+        "status": 0,
+        "created": "2017-03-16 21:05:35"
+      },
+      {
+        "rid": 30292,
+        "canBeFiltered": false,
+        "type": 0,
+        "id": 1505267,
+        "count": 259,
+        "modified": "2017-05-09 10:34:40",
+        "productId": 3938531,
+        "name": "\u56fd\u6c11\u624b\u673a",
+        "status": 0,
+        "created": "2017-03-16 14:48:16"
+      },
+      {
+        "rid": 15224,
+        "canBeFiltered": false,
+        "type": 0,
+        "id": 1504731,
+        "count": 259,
+        "modified": "2017-05-09 09:25:39",
+        "productId": 3938531,
+        "name": "\u53cd\u5e94\u5feb",
+        "status": 0,
+        "created": "2017-03-16 00:19:07"
+      },
+      {
+        "rid": 15235,
+        "canBeFiltered": false,
+        "type": 0,
+        "id": 1504504,
+        "count": 255,
+        "modified": "2017-05-09 11:28:15",
+        "productId": 3938531,
+        "name": "\u901a\u8bdd\u8d28\u91cf\u597d",
+        "status": 0,
+        "created": "2017-03-15 17:54:21"
+      },
+      {
+        "rid": 15236,
+        "canBeFiltered": false,
+        "type": 0,
+        "id": 1504502,
+        "count": 251,
+        "modified": "2017-05-09 08:59:05",
+        "productId": 3938531,
+        "name": "\u4fe1\u53f7\u7a33\u5b9a",
+        "status": 0,
+        "created": "2017-03-15 17:54:21"
+      },
+      {
+        "rid": 31384,
+        "canBeFiltered": false,
+        "type": 0,
+        "id": 1505432,
+        "count": 238,
+        "modified": "2017-05-09 10:37:56",
+        "productId": 3938531,
+        "name": "\u6307\u7eb9\u8bc6\u522b",
+        "status": 0,
+        "created": "2017-03-16 17:12:08"
+      }
+    ],
+    "productCommentSummary": {
+      "commentCountStr": "1.8\u4e07+",
+      "poorCount": 100,
+      "skuIds": null,
+      "poorRateShow": 1,
+      "productId": 3938531,
+      "generalCount": 200,
+      "goodRateStyle": 147,
+      "afterCount": 200,
+      "showCountStr": "2500+",
+      "commentCount": 18000,
+      "goodCount": 18000,
+      "goodRateShow": 98,
+      "generalCountStr": "200+",
+      "skuId": 3938531,
+      "poorCountStr": "100+",
+      "generalRateStyle": 2,
+      "afterCountStr": "200+",
+      "poorRateStyle": 1,
+      "averageScore": 5,
+      "poorRate": 0.009,
+      "generalRateShow": 1,
+      "generalRate": 0.013,
+      "goodRate": 0.978,
+      "goodCountStr": "1.8\u4e07+",
+      "showCount": 2500
+    },
+    "Task_FirstPageScan": {
+      "last_run_time": null,
+      "interval ": 86400,
+      "EndTime": null,
+      "next_run_time": 1494311603.501436,
+      "StartTime": null
+    },
+    "Category": "9987,653,655",
+    "maxPage": {
+      "history": [
+        {
+          "maxPage": 1846,
+          "time": 1494311604.018267
+        }
+      ],
+      "now_maxPage": 1846,
+      "time": 1494311603.501429
+    },
+    "sku": 3938531
+  },
+  "status": 0,
+  "id": 3938531,
+  "time": 1494311603.472858,
+  "run_timeout": 1,
+  "topic": "JDCOMMENTSTASK",
+  "report_timeout": 3600
+
+}

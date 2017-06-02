@@ -1,0 +1,25 @@
+执行器，抓取器，解析器应该只有一个入口。
+伪代码如下：
+import jd_task_kind
+class task:
+    def get_urls(self,task):
+        if task['topic'] == 'kind':
+            #根据不同的任务类型，调用不同的方法
+            #obj =  jd_task_kind()
+            #obj.get_urls(task)
+         elif  task['topic'] == 'kind1':
+            pass
+            .
+            .
+            .
+
+    def parser(self,html,task):
+        if task['topic'] == 'kind':
+            #根据不同的任务类型，调用不同的方法
+            #obj =  jd_task_kind()
+            #obj.parser(html,task)
+         elif  task['topic'] == 'kind1':
+            pass
+            .
+            .
+            .

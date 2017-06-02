@@ -1,0 +1,71 @@
+
+local_task['callback']['topic'] = str(uuid.uuid1())
+abstime = 执行时间
+local_task = {
+
+                             'topic':'jm_crawl',
+                             'guid':'',#沿用服务器下发的任务id
+                             'body':
+                                    {
+                                     'crawl':{'name':'','version':''},
+                                     'urls':[url,url],#该url对应的下边执行器返回的数据格式
+                                     'abstime':'',
+                                        #content主要是一组任务共有的关键信息
+                                     'content':{
+
+                                                    #lib 期望使用的抓取器，bulk是否一起发送
+                                                    'proxymode':'auto','encode':'utf-8',
+                                                    'lib':'aiohttp','max_retry':0,'bulk':False,
+                                                    'cookie':'','debug':False,'usephantomjs':False,
+
+                                               },
+                                    'result':[],#{'url': '', 'time': '', 'html': '', 'error': '', 'proxy': '', 'retry': 0, 'headers': '', 'other': '', 'sucess': False, 'platform': ''}
+                                    'parsing_data':[],
+                                    'callback':{"topic":'parsing',},
+                                    }
+
+
+             }
+
+
+执行器返回的数据格式：
+
+url = {
+
+    "url": {
+        "url": "https://so.m.jd.com/ware/searchList.action",
+        "useproxy": "",
+        "platform": "jd_app",
+        "sort":,
+        "page":,
+        "header": {
+            "content-length": "59",
+            "accept-encoding": "gzip, deflate, sdch",
+            "x-requested-with": "XMLHttpRequest",
+            "user-agent": "Mozilla/4.0 (MobilePhone SCP-PRO700/US/1.0) NetFront/3.4 MMP/2.0",
+            "connection": "keep-alive",
+            "accept": "application/json",
+            "accept-language": "zh-CN,zh;q=0.8",
+            "origin": "https://so.m.jd.com",
+            "content-type": "application/x-www-form-urlencoded",
+            "referer": "https://so.m.jd.com/products/9987-830-866.html"
+        },
+        "data": {
+            "categoryId": "9987",
+            "c2": "866",
+            "c1": "830",
+            "_format_": "json",
+            "page": 15,
+            "sort": "",
+            "stock": 0
+        },
+        "method": "POST"
+    },
+
+}
+
+本地任务：
+local_task['body']下的urls,result,parsing_data都是链表，它们都一一对应.
+urls的值是执行器进行填充的
+result的值是抓取器进行填充的
+parsing_data的值是解析器进行填充的

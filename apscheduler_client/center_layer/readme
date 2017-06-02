@@ -1,0 +1,42 @@
+
+#此脚本在中间层会调用不需要启动
+中间层和客户端通信的脚本
+
+
+1：center_layer 此目录是任务调度中心和执行器的中间层，调度中心将该执行的任务发送到中间层，中间层将任务进行存储，执行器向中间层提取任务。
+
+                |--center_layer  中间层
+                |
+                |
+center_layer----|
+                |
+                |
+                |---interface 中间层链接客户端的接口
+
+2：zmq_out_interface 用zmq实现的对外接口（可以用web来取代）
+数据流向"：
+
+外部---》中间层----（当前位置）----》客户端
+
+本地任务和作业的操作接口通讯格式：
+
+（
+
+  1：操作本地任务接口，type:task
+  2：操作本地作业接口，type：job
+  3：上传数据接口     type:data
+
+ ）
+
+     #此接口主要负责操作本地任务列表和作业
+    # 1.'command':'add',”task”:{} ，type= "task/job"  任务操作／作业操作
+    # 2."command":"del"id“:’’,type= "task/job"
+    # 3."command":"update",”content”:{},type= "task/job"
+    # 4."command":'pop',”find”:’’,type= "task/job"
+
+    作业的接口通讯格式：
+    在任务的基础上增加了两个功能：
+    'command':'pause',”id”: ，type= "task/job"  任务操作／作业操作#暂停任务
+    'command':'resume',”id”: ，type= "task/job"  任务操作／作业操作#回复任务
+
+
