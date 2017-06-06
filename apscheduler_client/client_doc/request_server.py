@@ -31,6 +31,7 @@ class request_server:
         self.socket_server1.send_json(msg)
         while True:  # 服务器中断会一直尝试重连
             socks = dict(self.poll.poll(3000))
+
             if socks.get(self.socket_server1) == zmq.POLLIN:
                 break
             else:
@@ -69,8 +70,11 @@ class request_server:
         """
         收到服务器端的任务进行解析
         """
-        self.send(self.head)
-        data = self.recv_data()#将服务器返回的数据转换为字典
+        try:
+            self.send(self.head)
+            data = self.recv_data()#将服务器返回的数据转换为字典
+        except:
+            pass
         #print ("服务器回复：",data)#得到服务器下发到content tasks 下的任务
         for item in data['content']:#遍历任务列表
             task = item['task']
@@ -99,6 +103,7 @@ class request_server:
                 #更新总任务列表中任务的属性
 
     def update_much_taskinfo(self):#批量更新当前任务状态
+
         #有些任务执行一次就会删除，假如任务状态为4删除状态，是否需要将此任务上传服务器通知服务器删除
         self.head[setting.ROW_BODY]['tasks'] = []
         self.head['command']['action'] = setting.UPDATE_MUCH_TASKINFO
@@ -168,31 +173,36 @@ class request_server:
             pass
 
 
-obj = request_server()
+
+
 def update_task_list():
+    obj = request_server()
     # 剔除get_tasks 字段，分配任务个数交由服务器端来决定
     obj.update_task_list()
 
 def update_much_taskinfo():
+    obj = request_server()
     obj.update_much_taskinfo()
 
 
 def upload_client_status():
+    obj = request_server()
     obj.upload_client_status()
 
 def upload_client_data():
-
+    obj = request_server()
     obj.upload_client_data()
 
 def update_proxy_data():
-
+    obj = request_server()
     obj.update_proxy_data()
 
 def update_cookie_data():
+    obj = request_server()
     obj.update_cookie_data()
 
 
 
 if __name__ == "__main__":
     #剔除get_tasks 字段，分配任务个数交由服务器端来决定
-    upload_client_data()
+    update_task_list()
