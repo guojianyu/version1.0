@@ -1,5 +1,5 @@
 #-*- utf-8 -*-
-from excutor_doc.jd_tools import *
+from excutor_doc.jd_tools import * #
 import os
 
 class jd_task_class:#执行器和解析器的入口类，找到对应的执行器和解析器

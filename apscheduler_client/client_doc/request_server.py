@@ -1,6 +1,7 @@
 #此脚本负责向服务器请求数据和上报数据
 #status 状态初始状态0，进入延时队列1，正在执行2，超时3，删除4，完成5
-import time,requests,json
+import time,json,zmq
+from bson import ObjectId
 from client_doc import system_info
 from client_doc import setting
 from pymongo import MongoClient
@@ -18,7 +19,35 @@ class request_server:
                         }
 
                      }
-        #客户端请求服务器的具体上传数据的json数据结构
+        context = zmq.Context()
+        self.socket_server1 = context.socket(zmq.REQ)
+        self.socket_server1.connect('tcp://localhost:' + setting.SERVER_PORT)
+        self.poll = zmq.Poller()
+        self.poll.register(self.socket_server1, zmq.POLLIN)
+
+
+
+    def send(self,msg):
+        self.socket_server1.send_json(msg)
+        while True:  # 服务器中断会一直尝试重连
+            socks = dict(self.poll.poll(3000))
+            if socks.get(self.socket_server1) == zmq.POLLIN:
+                break
+            else:
+                print ('重新连接服务器')
+                self.socket_server1.setsockopt(zmq.LINGER, 0)
+                self.socket_server1.close()
+                self.poll.unregister(self.socket_server1)
+                context = zmq.Context()
+                self.socket_server1 = context.socket(zmq.REQ)
+                self.socket_server1.connect('tcp://localhost:' + setting.SERVER_PORT)
+                self.poll.register(self.socket_server1, zmq.POLLIN)
+                self.socket_server1.send_json(msg)
+
+
+    def recv_data(self):
+        return self.socket_server1.recv_json()
+
     def update_task_list(self):# 更新任务列表
         self.head[setting.ROW_BODY]['taskstats']['status'] = []
         self.head['command']['action'] =setting.UPDATE_TASK_LIST #'update_task_list'
@@ -40,12 +69,8 @@ class request_server:
         """
         收到服务器端的任务进行解析
         """
-        #print(self.head)
-        try:
-            text = requests.get("http://127.0.0.1:8000/posttask/{data}".format(data=json.dumps(self.head)))
-            data = json.loads(text.text)#将服务器返回的数据转换为字典
-        except:
-            return
+        self.send(self.head)
+        data = self.recv_data()#将服务器返回的数据转换为字典
         #print ("服务器回复：",data)#得到服务器下发到content tasks 下的任务
         for item in data['content']:#遍历任务列表
             task = item['task']
@@ -82,29 +107,31 @@ class request_server:
         for task in data:
             self.head[setting.ROW_BODY]['tasks'].append(task)#将任务状态为2和5任务属性变化的数据添加进去
         try:
-            text = requests.get("http://127.0.0.1:8000/posttask/{data}".format(data=json.dumps(self.head)))
-            data = json.loads(text.text)  # 将服务器返回的数据转换为字典
-            print(data)  # 得到服务器的回复
+            self.send(self.head)
+            data = self.recv_data()  # 将服务器返回的数据转换为字典
+            #print(data)  # 得到服务器的回复
         except:
             pass
 
     def upload_client_data(self):#客户端回报数据
         data_list = []
         self.head['command']['action'] = setting.UPLOAD_CLIENT_DATA
-        """
-        data = self.save_data[setting.DATA_TB].find()#得到保存的所有数据
-        if not data.count:#没有数据,则不上报服务器
-            return
-        """
-        data = ['helllllllll','wwwwwwwwwwwwwww']
-        for item in data:
-            data_list.append(item)#将所有数据追加到列表
+        data = self.save_data[setting.DATA_TB].find().limit(20)#得到保存的所有数据
 
+        if not data.count():#没有数据,则不上报服务器
+            return
+        for item in data:
+            try:
+                item.pop('_id')
+            except:
+                pass
+            data_list.append(item)#将所有数据追加到列表
+            #self.save_data[setting.DATA_TB].remove({'_id': item['_id']})#删除
         try:
-            self.head['body']['data'] = data_list#将上传数据添加到该字段
-            text = requests.get("http://127.0.0.1:8000/posttask/{data}".format(data=json.dumps(self.head)))
-            data = json.loads(text.text)  # 将服务器返回的数据转换为字典
-            print(data)  # 得到服务器的回复
+            self.head['body']['data'] = data_list  # 将上传数据添加到该字段
+            self.send(self.head)
+            data = self.recv_data()  # 将服务器返回的数据转换为字典
+            print (data)
         except:
             pass
     def upload_client_status(self):#客户端上传状态 主要是cpu 等硬件信息的上传。
@@ -114,9 +141,9 @@ class request_server:
         self.head[setting.ROW_BODY]['client_status'] = {'sysinfo':sysinfo,'time':time.time()}#系统信息，和获取信息时间
         print ("cpu*******",self.head[setting.ROW_BODY]['client_status'])
         try:
-            text = requests.get("http://127.0.0.1:8000/posttask/{data}".format(data=json.dumps(self.head)))
-            data = json.loads(text.text)  # 将服务器返回的数据转换为字典
-            print("上传cpu信息的回复：", data)  # 得到服务器的回复
+            self.send(self.head)
+            data = self.recv_data()  # 将服务器返回的数据转换为字典
+            #print("上传cpu信息的回复：", data)  # 得到服务器的回复
         except:
             pass
 
@@ -125,25 +152,23 @@ class request_server:
         self.head['command']['action'] = setting.UPDATE_PROXY_DATA
         try:
             self.head['body']['proxy_data'] = [{'ip':'','port':'','type':'','url':''},{}] #上报代理数据type代表http/https,url指用于的平台
-            text = requests.get("http://127.0.0.1:8000/posttask/{data}".format(data=json.dumps(self.head)))
-            data = json.loads(text.text)  # 将服务器返回的数据转换为字典
-            print(data)  # 得到服务器的回复
+            self.send(self.head)
+            data = self.recv_data()  # 将服务器返回的数据转换为字典
+            #print(data)  # 得到服务器的回复
         except:
             pass
     def update_cookie_data(self):#更新cookie数据
         self.head['command']['action'] = setting.UPDATE_COOKIE_DATA
         try:
             self.head['body']['cookie_data'] = {'jd':[{'sid':'','_jdu':'','_jdv':'','_jda':'',},{}],'tianmao':[{},{}]} #上报的cookie数据，以平台为key以cookie列表为value
-            text = requests.get("http://127.0.0.1:8000/posttask/{data}".format(data=json.dumps(self.head)))
-            data = json.loads(text.text)  # 将服务器返回的数据转换为字典
-            print(data)  # 得到服务器的回复
+            self.send(self.head)
+            data = self.recv_data()  # 将服务器返回的数据转换为字典
+            #print(data)  # 得到服务器的回复
         except:
             pass
 
 
-
 obj = request_server()
-
 def update_task_list():
     # 剔除get_tasks 字段，分配任务个数交由服务器端来决定
     obj.update_task_list()
@@ -156,9 +181,11 @@ def upload_client_status():
     obj.upload_client_status()
 
 def upload_client_data():
+
     obj.upload_client_data()
 
 def update_proxy_data():
+
     obj.update_proxy_data()
 
 def update_cookie_data():

@@ -24,10 +24,9 @@ import time
 
 
 class server:
-
     def __init__(self,**arg):
-        conn = MongoClient('localhost', 27017)
-        self.db = conn[setting.DATABASES]
+        self.conn = MongoClient('localhost', 27017)
+        self.db = self.conn[setting.DATABASES]
         self.result = {'success':True,'error':"error reason",'content':''}
         #客户端请求服务器的具体上传数据的json数据结构
 
@@ -103,18 +102,23 @@ class server:
             #如果上传的任务的设备与服务器所分配的任务设备id一致则接受数据或其他处理，
             tmp = self.db[setting.TASKS_LIST].find_one({'guid':task['guid']})
             if message['device']['id'] == tmp['device']['id']:
-                self.db[setting.TASKS_LIST].update({'guid':task['guid']},task)#客户端上传的任务状态更新到总任务链表
-            else:
-                #任务已经被剥夺，得到的结果写日志，不做其他动作
-                pass
-        pass
+                result =self.db[setting.TASKS_LIST].find_and_modify(query={'guid': task['guid']},
+                                               update={'$set':task})
+
+                #self.db[setting.TASKS_LIST].update({'guid':task['guid']},task)#客户端上传的任务状态更新到总任务链表
+
+
     def upload_client_data(self,**message):#客户端回报数据,客户端的上传数据都为这个接口
+
         data = message['body']['data']
         #根据guid得到任务，根据任务属性确定任务的存储的具体数据库和数据表
         #上传的数据格式{'gudi':{'format':'','data':''}}format 压缩格式。data数据，guid 任务ID
         #判断上传数据的数据类型，存储到不同的数据库中
         #得到客户端回报的数据，写入数据库
-
+        print ('data:',data)
+        db = self.conn[setting.TMP_DB]
+        tb = db[setting.TMP_TB]
+        tb.insert(data)
         # 如果上传的任务的设备与服务器所分配的任务设备id一致则接受数据或其他处理，
         # 考虑上传数据间隔的问题，上传设备与任务设备不同，也会考虑接受数据
         print ('recv',data)
@@ -147,6 +151,7 @@ async def posttask(request):
     #print (message)
     obj = server()
     ret = getattr(obj, message['command']['action'])  # 获取的是个对象
+
     ret(**message)
     #print (obj.result)
     result = json.dumps(obj.result)

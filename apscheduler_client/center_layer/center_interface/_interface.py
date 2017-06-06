@@ -121,11 +121,14 @@ class oprate_task_job:
         self.send(mes)
         return self.recv()
 if __name__ == "__main__":
+
+
+
     level = ['info','debug','warning','error']
 
     task = {"device":
                 {'type': "", 'version': '127.22', 'id': ''},
-            'guid': 14, 'time': time.time(), 'timeout': 40, 'topic': 'hello',
+            'guid': 14, 'time': time.time(), 'timeout': 40, 'topic': 'jd_task_kind',
             'interval': 6000,  # 任务执行周期间隔时间
             'suspend': 0,  # 暂停标识
             'status': 0,

@@ -45,6 +45,10 @@ local_task = {
 url = {
 
     "url": {
+        'callback':{}
+        "topic":'parsing',
+        "guid":task['guid'],
+        "task_count":url_count,
         "url": "https://so.m.jd.com/ware/searchList.action",
         "useproxy": "",
         "platform": "jd_app",
@@ -73,7 +77,7 @@ url = {
         },
         "method": "POST"
     },
-
+    "result":[{'url': '', 'time': '', 'html': '',  'retry': 0,'sucess': False},]
 }
 
 本地任务：

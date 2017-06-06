@@ -70,7 +70,7 @@ class task_opt:  #数据库操作的类
             {
                 setting.ROW_GUID: data[setting.ROW_GUID]
             },
-           data,
+            data,
             True
         )
         #tb.insert(data)
@@ -86,12 +86,21 @@ def timeout_cute(task):#超时时间到了，任务开始执行，然后将任�
         #暂停任务，防止重复扫描
     elif c_task['status'] == 3:#上次已经超时
         #删除该任务，或者更改作业的执行时间
-        #status = 3，表示上次已经分配过了，error_count +=1 ,超时次数+1，当达到某一个值时，将任务删除或者写日志。
         pass
+        #status = 3，表示上次已经分配过了，error_count +=1 ,超时次数+1，当达到某一个值时，将任务删除或者写日志。
+        """
+        task['timeout_count'] += 1
+        if task['timeout_count'] >=5:
+            job.db[setting.RECODE_ERROR_LIST].insert(task)#将超时次数达到最大超时次数的任务写入记录表中
+            job.db[setting.TASKS_LIST].remove(task)#将任务从总任务列表删除
+        """
     elif c_task['status'] == 4:#一次性任务，执行完成，删除
+        job.db[setting.TASKS_LIST].remove({'guid':task['guid']})
         pass
     elif c_task['status'] == 5:#周期性任务，完成状态,将状态置为1，等待执行状态
-        pass
+        job.db[setting.TASKS_LIST].find_and_modify(query={'guid': task['guid'],},
+                              update={'$set': {'status': 1}})
+
 def scan_task():#周期性任务，将未加入工作队列和没有被分配的的任务添加到工作队列（就绪列表）
 
     result = data_opt.task_job(job)
@@ -131,18 +140,6 @@ class server_job:
         self.inter_socket = context.socket(zmq.REP)
         self.inter_socket.bind("tcp://*:" + setting.OUT_PORT)
 
-    def write_log(self, arg):  # 写日志 arg的格式 {'level':,'content':....}level是写扫描类型的日志，content是日志内容
-        level = arg['level']  # 得到日志等级
-        content = arg['content']  # 日志内容
-        if level == 'info':
-            print ('info')
-            logging.info(content)
-        elif level == 'debug':
-            logging.debug(content)
-        elif level == 'warning':
-            logging.warning(content)
-        elif level == 'error':
-            logging.error(content)
 
     def add_task_list(self, arg):
 

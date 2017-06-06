@@ -37,10 +37,9 @@ def Resolving_server_tasks(topic,count=1):
 
 
 if __name__ =='__main__':
-    a = send({'topic':'hello','value':111112222})
-    print (a)
     #Resolving_server_tasks('kind', count=1)#解析服务器任务，批量生成本地任务
-    req = {'type':'get_size','topic': 'hello', 'count':4}
+    send({'topic':'jd_task_kind','value':222})
+    req = {'type':'get_size','topic': 'jd_task_kind', 'count':1}
     socket_excutor.send_json(req)
     data = socket_excutor.recv_json()
     print (data)

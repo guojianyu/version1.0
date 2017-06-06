@@ -15,6 +15,7 @@ class oprate_task_job:
         self.poll = zmq.Poller()
         self.poll.register(self.socket, zmq.POLLIN)
 
+
         """日志"""
         logging.basicConfig(level=logging.DEBUG,
                             format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
@@ -117,11 +118,10 @@ class oprate_task_job:
 
 if __name__ == "__main__":
     level = ['info','debug','warning','error']
-
     task = {"device":
                 {'type': "", 'version': '127.22', 'id': ''},
-            'guid': 31, 'time': time.time(), 'timeout': 2000, 'topic': 'kind',
-            'interval': 5000,  # 任务执行周期间隔时间
+            'guid': '9a4e4a10-45d6-11e7-9169-a860b60c7377', 'time': time.time(), 'timeout': 40000, 'topic': 'jd_task_kind',
+            'interval': 6000,  # 任务执行周期间隔时间
             'suspend': 0,  # 暂停标识
             'status': 0,
 
@@ -129,6 +129,7 @@ if __name__ == "__main__":
                 'kind': '9987,830,866', 'platform': 'jd_app', 'sort': None,
                 "url": "https://list.jd.com/list.html?",
                 "maxpage": 0,
+                'shopid': 1,
                 "cookie_type": "jd_web",
                 'key_search': 0,
                 "data": {
@@ -140,7 +141,6 @@ if __name__ == "__main__":
                     "JL": "6_0_0"
                 }
             }}
-
 
     obj = oprate_task_job(9002)
     arg = {'level':'info','content':'aps_all_copy'}

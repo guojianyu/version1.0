@@ -111,14 +111,14 @@ class mongo_scan:
             except:
                 ret = False
 
-        elif task[setting.ROW_TOPIC] == 2:  # 定时性任务
+        elif task[setting.ROW_TOPIC] == 2: #定时性任务
             try:
                 self.scheduler.add_job(func=aps_test, args=(task,), trigger='cron', start_date=task['time'],
                               second=task['interval'], id=id)
             except:
                 ret = False
 
-        elif task[setting.ROW_TOPIC] == 3:  # 一次性任务
+        elif task[setting.ROW_TOPIC] == 3:  #一次性任务
             try:
                 self.scheduler.add_job(func=aps_test, args=('循环任务',),
                               next_run_time=datetime.datetime.now() + datetime.timedelta(seconds=12),
@@ -163,9 +163,8 @@ class mongo_scan:
         return ret
     """接收到上传数据的接口"""
     def upload_data(self,mes):
-        format_data = {'sku':'','spu':'',}
         #对上传的数据进行存储，根据不同的类型数据不同的操作
-        self.data_tb.insert(mes)
+        a = self.data_tb.insert(mes)
         return 'recv data'
 
 

@@ -1,12 +1,8 @@
-from pymongo import MongoClient
-conn = MongoClient('localhost', 27017, connect=False)
-db = conn['test']
-tb = db['gg']
-
-data = tb.find()
-
-print (data.count())
-tb.remove()
-for i in data:
-
-    print (i)
+import zmq
+import setting
+context = zmq.Context()
+socket_client = context.socket(zmq.REP)
+socket_client.bind("tcp://*:" + setting.SERVER_PORT)
+data = socket_client.recv_json()
+print (data)
+socket_client.send_json(['hhh',])

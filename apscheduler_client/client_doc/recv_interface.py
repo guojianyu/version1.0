@@ -26,7 +26,6 @@ class interface():
         while True:
             try:
                 mes = self.inter_socket.recv(zmq.NOBLOCK).decode('utf-8')# 接受到的请求数据，接受到是json格式的内容
-                print('excutor_process *******************',mes)
             except zmq.ZMQError:
                 time.sleep(0.1)
                 continue

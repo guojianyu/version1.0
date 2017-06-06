@@ -1,7 +1,7 @@
 #总任务链表数据库相关
 DATABASES = 'jame_bd'  #数据库
 TASKS_LIST = 'task_main'  #总任务列表
-TOPIC = ['kind','hello','hello1']#任务类型
+TOPIC = ['kind','jd_task_kind','hello1']#任务类型
 COMPLETE = "complete" #存储自上次更新任务后的完成任务数总数的表 , {'topic': 类型，'count':个数}
 
 #作业存储数据库相关
@@ -36,7 +36,7 @@ STATUS_FINISH = 5  # 任务完成，控制权交回队列
 """客户端启动对作业的处理方式"""
 CLEAR = 'clear'#客户端启动将作业列表清空然后只添加本地作业
 CHECK= 'update'#保留所有的作业，检查本地作业，本地作业没有则添加，有则跳过。
-PULSE_ON_TYPE = CHECK
+PULSE_ON_TYPE =CLEAR
 
 """本地任务生成作业的id"""
 #特殊的本地任务
@@ -72,4 +72,4 @@ OUT_PORT = '9000'
 PUSH_PORT = '5599'#客户端向中间层推任务的端口
 
 
-
+SERVER_PORT = '8989'

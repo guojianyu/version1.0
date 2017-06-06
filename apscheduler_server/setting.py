@@ -7,15 +7,20 @@ RECODE_LIST = "recode_list"  #记录超时任务的id和该任务上次分配的
 
 CLIENT_CPU_DATA = 'cpu_data'#存储客户端的硬件信息数据表{'time':time,'system_info':sys_info,'device_id':device_id}
 
-JOB_COLL = 'server_job'#aps储存作业的集合
+RECODE_ERROR_LIST = 'error_task'#记录任务的超时次数大于任务默认的最大超时次数的表
+
+
+TMP_DB = 'tmp_db'
+TMP_TB = 'tmp_tb'
 
 JOB_DB = 'aps_all_copy'#aps储存作业的数据库名称
+JOB_COLL = 'server_job'#aps储存作业的集合
 
 
 
 TASK_STATUS  = {'WAIT':0,'READY':1,'EXCUTE':2,'TIMEOUT':3,'DELETE':4,'FINISH':5}#0等待，1：进入就绪队列，2：执行中，3：超时，4：删除 5：完成
 
-DOWN_LOGO = {'down':["kind",'sku1'],'notdown':['sku2',]}
+DOWN_LOGO = {'down':["jd_task_kind",'sku1'],'notdown':['sku2',]}
 
 DOWN_COUNT = {'down':100,'notdown':200}
 
@@ -42,5 +47,5 @@ ROW_STATUS = 'status'
 """外部端口"""
 OUT_PORT = '9002'
 
-
+SERVER_PORT = '8989'
 

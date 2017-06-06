@@ -55,7 +55,8 @@ class  system_fun:
             if socks.get(self.socket_excutor) == zmq.POLLIN:
                 break
             else:  # 尝试重连
-                print("尝试重连中间层1")
+                print("执行器尝试重连中间层")
+                time.sleep(0.1)
                 self.socket_excutor.setsockopt(zmq.LINGER, 0)
                 self.socket_excutor.close()
                 self.poll.unregister(self.socket_excutor)
@@ -92,14 +93,19 @@ class  system_fun:
         # 线程动态加载模块可能导致模块加载失败
         while True:
             try:
-                result = queue.get()#得到具体的任务，调用相应的脚本
-                print (result,'get task********','pid:',pid,'tid:',i)
-                topic = 'test'
-                module_name = '.'.join((setting.TYPE01_DIR,topic))#在归类目录中找到相应的脚本
-                m1 = __import__(module_name)#找到了脚本所在的目录
-                script = getattr(m1,'test')#根据类型找到脚本
-                cls = getattr(script,'a')()#根据类型找到脚本中的类，实例话
-                cls.test()#调用run函数
+                result = queue.get()  # 得到具体的任务，调用相应的脚本
+                print(result, 'get task********', 'pid:', pid, 'tid:', i)
+                topic = 'jd_task_kind'
+                module_name = '.'.join((setting.SCRIPT_DIR, topic))
+                m1 = __import__(module_name)  # 找到了脚本所在的目录
+                script = getattr(m1, 'jd_task_kind')  # 根据类型找到脚本
+                cls = getattr(script, 'jd_task_kind')()  # 根据类型找到脚本中的类，实例话
+                cls.run(result)
+                """
+                import jd_task_kind
+                obj = jd_task_kind.jd_task_kind()
+                obj.run(result)
+                """
 
             except Exception as e:
                 print(e)
@@ -108,12 +114,13 @@ class  system_fun:
         #将轮询setting文件中的topic 依次获取任务
         obj = system_fun()
         while True:
-            task_list = obj.Access_to_task(type='get_task', topic='kind', count=setting.GET_COUNT)
+            task_list = obj.Access_to_task(type='get_task', topic='jd_task_kind', count=setting.GET_COUNT)
             if task_list:
                 for task in task_list:
                     q.put(task)
             else:
                 time.sleep(0.2)
+
             """
             for topic in setting.TOPIC：
                 task_list = obj.Access_to_task(type='get_task', topic=topic, setting.GET_COUNT)
