@@ -10,8 +10,13 @@ LOCAL_TASK_PORT = '7777'#向中间层添加本地任务的端口
 CENTER_INTERFACE_PORT = 9995#通过中间层对客户端总任务列表和作业修改端口
 
 
-TOPIC = ['kind','hello','hello1']#任务类型
+TOPIC = ['kind','jd_task_kind','hello1']#任务类型
 
+
+STATUS_EXCUTING = 2  # 任务正在执行
+
+ROW_GUID = 'guid'
+ROW_STATUS = 'status'
 
 """扫描任务进程个数"""
 

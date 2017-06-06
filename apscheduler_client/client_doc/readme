@@ -50,7 +50,7 @@ ERROR.txt 是错误记录错误日志的文件
 apscheduler_client 任务调度中心的所有逻辑代码块
                   |-------aps_client（客户端总程序入口） 任务调度中心的主要逻辑，下面的文件的功能都被此文件添加作为本地任务
                   |
-                  |-------request_server 向服务器请求的主要逻辑
+                  |-------request_server 向服务器请求的主要逻辑（zmq 实现）
                   |
 apscheduler_client|--------system_info  获取系统信息
                   |
@@ -58,5 +58,5 @@ apscheduler_client|--------system_info  获取系统信息
                   |
                   |---------获取cookie（预留）
                   |
-                  |---------上报解析的数据（预留）
+                  |---------request_server1 向服务器请求的主要逻辑（web实现）
 

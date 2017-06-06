@@ -209,44 +209,38 @@ class jd_task_kind:
             charStr2 = '京东下载页'
             charStr3 = '专业网上购物平台品质保障'
             if html == constStr1:
-                print ("fangpa**********constStr1")
                 isAntiSpier = True
             if html == constStr2:
-                print("fangpa**********constStr2")
                 isAntiSpier = True
             if html.find(charStr1) is not -1:
-                print("fangpa**********charStr1")
                 isAntiSpier = True
             if html.find(charStr2) is not -1:
-                print("fangpa**********charStr2")
                 isAntiSpier = True
             if html.find(charStr3) is not -1:
-                print("fangpa**********charStr3")
                 isAntiSpier = True
         return isAntiSpier
 
     @classmethod
     def run(cls,task):
-
         obj = excutor_cls()
         urls = cls.get_urls(task)
         arg = {'urls':urls,'guid':task['guid']}
         ptask = obj.interface(arg)
-       # print (ptask,"*************ptask")
-        zresult={'guid':task['guid'],'result':[],'data':[]}
+        #print(ptask,"*************ptask")
+        result={'guid':task['guid'],'result':[],'data':[],'topic':task['topic'],'upload_flag':0}
         if ptask:
             results = ptask[0]['body']['result']
             for index, _result in enumerate(results):
                 if cls.isAntiSpider(_result['html'], _result):
-                    zresult['result'].append({'platform':_result['url']['platform'],'sort':_result['url']['sort'],'kind':_result['url']['kind'],'page':_result['url']['page'],'html':'isAntiSpider'})
+                    result['result'].append({'platform':_result['url']['platform'],'sort':_result['url']['sort'],'kind':_result['url']['kind'],'page':_result['url']['page'],'html':'isAntiSpider'})
                     continue
                 data = cls.parser(_result['html'],_result)
                 if data:
-                    zresult['result'].append({'platform': _result['url']['platform'], 'sort': _result['url']['sort'],'kind': _result['url']['kind'], 'page': _result['url']['page'],'html': 'has parsed'})
-                    zresult['data'].append(data)
+                    result['result'].append({'platform': _result['url']['platform'], 'sort': _result['url']['sort'],'kind': _result['url']['kind'], 'page': _result['url']['page'],'html': 'has parsed'})
+                    result['data'].append(data)
                 else:
-                    zresult['result'].append({'platform': _result['url']['platform'], 'sort': _result['url']['sort'],'kind': _result['url']['kind'], 'page': _result['url']['page'],'html':_result['html']})
-            obj.inter_obj.upload_data(zresult)
+                    result['result'].append({'platform': _result['url']['platform'], 'sort': _result['url']['sort'],'kind': _result['url']['kind'], 'page': _result['url']['page'],'html':_result['html']})
+            obj.inter_obj.upload_data(result)
       #  return data
 
     @classmethod

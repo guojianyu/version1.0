@@ -149,6 +149,7 @@ if __name__ == "__main__":
 
     obj = oprate_task_job(9995)
     arg = {'level':'info','content':'aps_all_copy'}
+
     ret = obj.add_task(task)
     print (ret)
 

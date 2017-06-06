@@ -98,9 +98,15 @@ class  system_fun:
                 topic = 'jd_task_kind'
                 module_name = '.'.join((setting.SCRIPT_DIR, topic))
                 m1 = __import__(module_name)  # 找到了脚本所在的目录
-                script = getattr(m1, 'jd_task_kind')  # 根据类型找到脚本
-                cls = getattr(script, 'jd_task_kind')()  # 根据类型找到脚本中的类，实例话
+                print ('m1>>>>>>>',m1)
+                script = getattr(m1, topic)  # 根据类型找到脚本
+                print ('script>>>',script)
+                cls = getattr(script, topic)()  # 根据类型找到脚本中的类，实例话
+                print ('cls>>>>',cls)
+                #将任务的状态更改为执行状态2
+                #self.inter_obj.update_task({setting.ROW_GUID:result['guid'],setting.ROW_STATUS:setting.STATUS_EXCUTING})
                 cls.run(result)
+
                 """
                 import jd_task_kind
                 obj = jd_task_kind.jd_task_kind()

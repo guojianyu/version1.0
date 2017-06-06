@@ -35,7 +35,7 @@ class request_server:
             if socks.get(self.socket_server1) == zmq.POLLIN:
                 break
             else:
-                print ('重新连接服务器')
+                #print ('重新连接服务器')
                 self.socket_server1.setsockopt(zmq.LINGER, 0)
                 self.socket_server1.close()
                 self.poll.unregister(self.socket_server1)
@@ -107,9 +107,10 @@ class request_server:
         #有些任务执行一次就会删除，假如任务状态为4删除状态，是否需要将此任务上传服务器通知服务器删除
         self.head[setting.ROW_BODY]['tasks'] = []
         self.head['command']['action'] = setting.UPDATE_MUCH_TASKINFO
-        data = self.db[setting.TASKS_LIST].find({setting.ROW_STATUS:{'$in':[2,5]}})#状态是2和5代表任务正在执行和任务完成，正在执行状态的更新是防止超时服务器，
+        data = self.db[setting.TASKS_LIST].find({setting.ROW_STATUS:{'$in':[2,4,5]}})#状态是2和5代表任务正在执行和任务完成，正在执行状态的更新是防止超时服务器，
         # 将任务分配给其他客户端，而状态5表示任务执行完成，执行时间被改变上传服务器
         for task in data:
+            task.pop('_id')
             self.head[setting.ROW_BODY]['tasks'].append(task)#将任务状态为2和5任务属性变化的数据添加进去
         try:
             self.send(self.head)
@@ -121,8 +122,7 @@ class request_server:
     def upload_client_data(self):#客户端回报数据
         data_list = []
         self.head['command']['action'] = setting.UPLOAD_CLIENT_DATA
-        data = self.save_data[setting.DATA_TB].find().limit(20)#得到保存的所有数据
-
+        data = self.save_data[setting.DATA_TB].find({'upload':0}).limit(20)#得到保存的所有数据
         if not data.count():#没有数据,则不上报服务器
             return
         for item in data:
@@ -131,12 +131,16 @@ class request_server:
             except:
                 pass
             data_list.append(item)#将所有数据追加到列表
+
             #self.save_data[setting.DATA_TB].remove({'_id': item['_id']})#删除
         try:
             self.head['body']['data'] = data_list  # 将上传数据添加到该字段
             self.send(self.head)
-            data = self.recv_data()  # 将服务器返回的数据转换为字典
-            print (data)
+            ret = self.recv_data()  # 将服务器返回的数据转换为字典
+            for item in data:
+                self.save_data[setting.DATA_TB].find_and_modify(query={setting.ROW_GUID: item['content'][setting.ROW_GUID]},
+                                                            update={'$set': {'upload': 1}})
+            print (ret)
         except:
             pass
     def upload_client_status(self):#客户端上传状态 主要是cpu 等硬件信息的上传。

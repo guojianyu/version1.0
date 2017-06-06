@@ -164,7 +164,18 @@ class mongo_scan:
     """接收到上传数据的接口"""
     def upload_data(self,mes):
         #对上传的数据进行存储，根据不同的类型数据不同的操作
-        a = self.data_tb.insert(mes)
+        self.data_tb.insert(mes['content'])#只将解析结果添加到数据库
+
+        # 将任务的状态进行更改,根据类型判断更改状态的值
+        if 1==1:#周期性任务
+            table = self.db[setting.TASKS_LIST]
+            table.find_and_modify(query={setting.ROW_GUID:mes['content'][setting.ROW_GUID]},
+                                  update={'$set': {setting.ROW_STATUS: setting.STATUS_FINISH}})
+        else:#一次性任务
+            table = self.db[setting.TASKS_LIST]
+            table.find_and_modify(query={setting.ROW_GUID: mes['content'][setting.ROW_GUID]},
+                                  update={'$set': {setting.ROW_STATUS: setting.STATUS_DELETED}})
+            #一次行任务同样是周期性任务，扫描任务负责删除
         return 'recv data'
 
 

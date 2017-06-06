@@ -178,7 +178,7 @@ class excutor_cls:
                     self.send(task)#将解析任务添加到中间层
                     i += 1
                     print (task['body']['result'],' 生成解析********',i)
-
+                    task['body']['result'] = []
                     pass  # 该任务拼接完成，可以生成解析任务。
                 self.result_q.task_done()
             else:
