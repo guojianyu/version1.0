@@ -21,40 +21,34 @@ class request_server:
                      }
         context = zmq.Context()
         self.socket_server1 = context.socket(zmq.REQ)
-        self.socket_server1.connect('tcp://localhost:' + setting.SERVER_PORT)
+        self.socket_server1.connect('tcp://118.187.53.58:' + setting.SERVER_PORT)
         self.poll = zmq.Poller()
         self.poll.register(self.socket_server1, zmq.POLLIN)
 
 
 
-    def send(self,msg):
+    def send(self,msg):#发送成功返回1，失败返回0
         self.socket_server1.send_json(msg)
         while True:  # 服务器中断会一直尝试重连
             socks = dict(self.poll.poll(3000))
-
             if socks.get(self.socket_server1) == zmq.POLLIN:
-                break
+                return 1
             else:
-                #print ('重新连接服务器')
-                self.socket_server1.setsockopt(zmq.LINGER, 0)
-                self.socket_server1.close()
-                self.poll.unregister(self.socket_server1)
-                context = zmq.Context()
-                self.socket_server1 = context.socket(zmq.REQ)
-                self.socket_server1.connect('tcp://localhost:' + setting.SERVER_PORT)
-                self.poll.register(self.socket_server1, zmq.POLLIN)
-                self.socket_server1.send_json(msg)
+                return 0
+
 
 
     def recv_data(self):
         return self.socket_server1.recv_json()
 
     def update_task_list(self):# 更新任务列表
+        data = ''
         self.head[setting.ROW_BODY]['taskstats']['status'] = []
         self.head['command']['action'] =setting.UPDATE_TASK_LIST #'update_task_list'
         for item in setting.TOPIC:#循环遍历所有任务队列
             count = self.db[setting.TASKS_LIST].find({'topic':item}).count()#得到此类型的任务总个数
             start = time.time()
+            #一次性任务应该单独查找，它的完成状态为4
             complt = self.db[setting.TASKS_LIST].find({setting.ROW_TOPIC:item,'status':5}).count()#记录完成该类型任务完成个数
             run = self.db[setting.TASKS_LIST].find({setting.ROW_TOPIC:item,'status':2}).count()# 得到此类型正在运行的任务个数
             wait = self.db[item+"_ready_list"].count()# 得到该任务就绪队列的总任务个数
@@ -64,43 +58,50 @@ class request_server:
             except Exception:
                 self.db[setting.COMPLETE].insert({'topic':item,'count':0})#可能因为此任务类型没有执行过，数据库记录为0
                 complete = 0
-            time.sleep(0.1)
-            effc =(self.db[setting.TASKS_LIST].find({setting.ROW_TOPIC:item,'status':5}).count()-complt)/(time.time()-start)#得到运行速率,每秒的完成个数为运行速率  完成个数增加量／时间
+            effc =(complt)/setting.UPDATE_MUCH_TASKINFO_TIME#得到运行速率,每秒的完成个数为运行速率  完成个数增加量／向服务器更新任务状态的时间,因为上报完成任务后会将任务初始化
             self.head[setting.ROW_BODY]['taskstats']['status'].append({setting.ROW_TOPIC:item,'count':count,'wait':wait,"run":run,'complete':complete,'effc':effc})
-        """
-        收到服务器端的任务进行解析
-        """
-        try:
-            self.send(self.head)
-            data = self.recv_data()#将服务器返回的数据转换为字典
-        except:
+
+        '''
+        if (now-startt)>intervel:
+            dosometing()
+            startt = now
+        else
             pass
-        #print ("服务器回复：",data)#得到服务器下发到content tasks 下的任务
-        for item in data['content']:#遍历任务列表
-            task = item['task']
-            if item['action'] == 'add':
-                print ('add:',task)
-                self.db[setting.TASKS_LIST].insert(task)
+        '''
+        #收到服务器端的任务进行解析
 
-                self.db[setting.TASKS_LIST].update(
-                    {
-                        setting.ROW_TOPIC: task[setting.ROW_TOPIC],
-                        setting.ROW_GUID: task[setting.ROW_GUID]
-                    },
-                   task,
-                    True
-                )
-                #将任务插入总任务列表
-            elif item['action'] == 'delete':
-                del_task = {setting.ROW_GUID :item['task'][setting.ROW_GUID]}
-                print('delete:',del_task)
-                self.db[setting.TASKS_LIST].remove(del_task)
-                #将任务从总任务列表删除
 
-            elif item['action'] == 'update':#update
-                print ('update')
-                self.db[setting.TASKS_LIST].update({setting.ROW_GUID:item['task'][setting.ROW_GUID]},task, upsert=True)
-                #更新总任务列表中任务的属性
+        if self.send(self.head):
+            data = self.recv_data()#将服务器返回的数据转换为字典
+
+        if data:
+            #print ("服务器回复：",data)#得到服务器下发到content tasks 下的任务
+            for item in data['content']:#遍历任务列表
+                task = item['task']
+
+                if item['action'] == 'add':
+                    print ('add:',task)
+                    self.db[setting.TASKS_LIST].insert(task)
+
+                    self.db[setting.TASKS_LIST].update(
+                        {
+                            setting.ROW_TOPIC: task[setting.ROW_TOPIC],
+                            setting.ROW_GUID: task[setting.ROW_GUID]
+                        },
+                       task,
+                       True
+                    )
+                    #将任务插入总任务列表
+                elif item['action'] == 'delete':
+                    del_task = {setting.ROW_GUID :item['task'][setting.ROW_GUID]}
+                    print('delete:',del_task)
+                    self.db[setting.TASKS_LIST].remove(del_task)
+                    #将任务从总任务列表删除
+
+                elif item['action'] == 'update':#update
+                    print ('update')
+                    self.db[setting.TASKS_LIST].update({setting.ROW_GUID:item['task'][setting.ROW_GUID]},task, upsert=True)
+                    #更新总任务列表中任务的属性
 
     def update_much_taskinfo(self):#批量更新当前任务状态
 
@@ -113,16 +114,19 @@ class request_server:
             task.pop('_id')
             self.head[setting.ROW_BODY]['tasks'].append(task)#将任务状态为2和5任务属性变化的数据添加进去
         try:
-            self.send(self.head)
-            data = self.recv_data()  # 将服务器返回的数据转换为字典
-            #print(data)  # 得到服务器的回复
+            if self.send(self.head):
+                data = self.recv_data()  # 将服务器返回的数据转换为字典
+            #更新状态成功将4，5任务状态变为等待执行状态
+                self.db[setting.TASKS_LIST].update({setting.ROW_STATUS:{'$in':[4,5]}},{'$set':{setting.ROW_STATUS:1}})
+
         except:
             pass
 
     def upload_client_data(self):#客户端回报数据
+        #填充数据上传时间
         data_list = []
         self.head['command']['action'] = setting.UPLOAD_CLIENT_DATA
-        data = self.save_data[setting.DATA_TB].find({'upload':0}).limit(20)#得到保存的所有数据
+        data = self.save_data[setting.DATA_TB].find({'upload_flag':0}).limit(20)#得到保存的所有数据
         if not data.count():#没有数据,则不上报服务器
             return
         for item in data:
@@ -131,16 +135,14 @@ class request_server:
             except:
                 pass
             data_list.append(item)#将所有数据追加到列表
-
-            #self.save_data[setting.DATA_TB].remove({'_id': item['_id']})#删除
         try:
             self.head['body']['data'] = data_list  # 将上传数据添加到该字段
-            self.send(self.head)
-            ret = self.recv_data()  # 将服务器返回的数据转换为字典
-            for item in data:
-                self.save_data[setting.DATA_TB].find_and_modify(query={setting.ROW_GUID: item['content'][setting.ROW_GUID]},
-                                                            update={'$set': {'upload': 1}})
-            print (ret)
+            if self.send(self.head):
+                ret = self.recv_data()  # 将服务器返回的数据转换为字典
+                for item in data_list:
+                    self.save_data[setting.DATA_TB].find_and_modify(query={setting.ROW_GUID: item[setting.ROW_GUID],'upload_flag':0},
+                                                              update={'$set': {'upload_flag': 1}})
+
         except:
             pass
     def upload_client_status(self):#客户端上传状态 主要是cpu 等硬件信息的上传。
@@ -150,8 +152,8 @@ class request_server:
         self.head[setting.ROW_BODY]['client_status'] = {'sysinfo':sysinfo,'time':time.time()}#系统信息，和获取信息时间
         print ("cpu*******",self.head[setting.ROW_BODY]['client_status'])
         try:
-            self.send(self.head)
-            data = self.recv_data()  # 将服务器返回的数据转换为字典
+            if self.send(self.head):
+                data = self.recv_data()  # 将服务器返回的数据转换为字典
             #print("上传cpu信息的回复：", data)  # 得到服务器的回复
         except:
             pass
@@ -170,8 +172,8 @@ class request_server:
         self.head['command']['action'] = setting.UPDATE_COOKIE_DATA
         try:
             self.head['body']['cookie_data'] = {'jd':[{'sid':'','_jdu':'','_jdv':'','_jda':'',},{}],'tianmao':[{},{}]} #上报的cookie数据，以平台为key以cookie列表为value
-            self.send(self.head)
-            data = self.recv_data()  # 将服务器返回的数据转换为字典
+            if self.send(self.head):
+                data = self.recv_data()  # 将服务器返回的数据转换为字典
             #print(data)  # 得到服务器的回复
         except:
             pass
@@ -183,28 +185,32 @@ def update_task_list():
     obj = request_server()
     # 剔除get_tasks 字段，分配任务个数交由服务器端来决定
     obj.update_task_list()
+    obj.socket_server1.close()
 
 def update_much_taskinfo():
     obj = request_server()
     obj.update_much_taskinfo()
-
+    obj.socket_server1.close()
 
 def upload_client_status():
     obj = request_server()
     obj.upload_client_status()
+    obj.socket_server1.close()
 
 def upload_client_data():
     obj = request_server()
     obj.upload_client_data()
+    obj.socket_server1.close()
 
 def update_proxy_data():
     obj = request_server()
     obj.update_proxy_data()
+    obj.socket_server1.close()
 
 def update_cookie_data():
     obj = request_server()
     obj.update_cookie_data()
-
+    obj.socket_server1.close()
 
 
 if __name__ == "__main__":

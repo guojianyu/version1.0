@@ -9,14 +9,17 @@ from multiprocessing import Process,Queue
 import multiprocessing,os
 from excutor_process import setting
 from excutor_process import _interface
-q = Queue()  #创建列队，不传数字表示列队不限数量
+q = Queue()  #创建列队，不传数字表示列队不限数量，填充服务器任务的队列
+
+
 class  system_fun:
     def __init__(self):
-        context = zmq.Context()
-        self.socket_excutor = context.socket(
+        self.context = zmq.Context()
+        self.socket_excutor = self.context.socket(
             zmq.REQ)  # 向中间层获取任务端口
         self.socket_excutor.connect("tcp://localhost:" + setting.EXCUTOR_PORT)
-        self.socket_add = context.socket(zmq.REQ)  # 向中间层添加本地任务端口
+
+        self.socket_add = self.context.socket(zmq.REQ)  # 向中间层添加本地任务端口
         self.socket_add.connect("tcp://localhost:" + setting.LOCAL_TASK_PORT)
         self.poll = zmq.Poller()
         self.poll.register(self.socket_excutor, zmq.POLLIN)
@@ -85,33 +88,24 @@ class  system_fun:
     def process_demo(self,pid):#开启线程的进程
         for i in range(setting.GET_THREADING_COUNT):
             t = threading.Thread(target=self.threading_get,
-                                 args=(q,pid,i))  # 开启固定的线程，并将该进程所属的对象传递进去
+                                 args=(pid,i))  # 开启固定的线程，并将该进程所属的对象传递进去
             t.start()
         t.join()
-    def threading_get(self,queue,pid,i):  # 进程开启的线程,该线程只是从队列获取任务，得到任务调用脚本
+    def threading_get(self,pid,i):  # 进程开启的线程,该线程只是从队列获取任务，得到任务调用脚本
         #线程负责调用相应的脚本,判断任务类型调用不同的脚本
         # 线程动态加载模块可能导致模块加载失败
         while True:
             try:
-                result = queue.get()  # 得到具体的任务，调用相应的脚本
+                result = q.get()  # 得到具体的任务，调用相应的脚本
                 print(result, 'get task********', 'pid:', pid, 'tid:', i)
                 topic = 'jd_task_kind'
                 module_name = '.'.join((setting.SCRIPT_DIR, topic))
                 m1 = __import__(module_name)  # 找到了脚本所在的目录
-                print ('m1>>>>>>>',m1)
                 script = getattr(m1, topic)  # 根据类型找到脚本
-                print ('script>>>',script)
                 cls = getattr(script, topic)()  # 根据类型找到脚本中的类，实例话
-                print ('cls>>>>',cls)
                 #将任务的状态更改为执行状态2
                 #self.inter_obj.update_task({setting.ROW_GUID:result['guid'],setting.ROW_STATUS:setting.STATUS_EXCUTING})
                 cls.run(result)
-
-                """
-                import jd_task_kind
-                obj = jd_task_kind.jd_task_kind()
-                obj.run(result)
-                """
 
             except Exception as e:
                 print(e)

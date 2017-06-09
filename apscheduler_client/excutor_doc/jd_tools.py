@@ -205,8 +205,8 @@ class jd_tools:
         if headers_option['host'] is not None:
             headers['host'] = headers_option['host']
 
-        if headers_option['user_agent'] is not None:
-            headers['user-agent'] = headers_option['user_agent']
+        if headers_option['user-agent'] is not None:
+            headers['user-agent'] = headers_option['user-agent']
 
         if headers_option['referer'] is not None:
             headers['referer'] = headers_option['referer']

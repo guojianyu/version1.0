@@ -17,7 +17,8 @@ from excutor_doc import task_class
 import asyncio
 import aiohttp,threading
 from excutor_doc import _interface
-from aiocfscrape import CloudflareScraper
+from pymongo import MongoClient
+import random
 class excutor_cls:
     def __init__(self):
         self.count = 0
@@ -64,12 +65,19 @@ class excutor_cls:
 
         self.inter_obj = _interface.oprate_task_job(setting.CENTER_INTERFACE_PORT)  # 通过中间层对客户端操作的对象
 
+        # 存放解析任务的数据库
+        conn = MongoClient('localhost', 27017, connect=False)
+        self.db = conn['pasrsing_data']
+        self.tb = self.db['pasrsing_tb']
 
     def interface(self, dict):  # 参数必须是一个字典
         print ('input interface****************')
-        next_topic = str(uuid.uuid1())  # 根据时间戳生成随机的uuid
+
+        #topic + guid生成下次的解析任务id
+        end_word = random.randrange(1,10000)
+        next_topic = str(uuid.uuid1()) + str(end_word) # 根据时间戳生成随机的uuid + guid 拼接成新的任务类型，同一时间线程同时运行，可能产生重复的值
         task = {'topic': 'JM_Crawl',
-                'guid': '1',  # 沿用服务器下发的任务id
+                'guid': dict['guid'],  # 沿用服务器下发的任务id
                 'body':
                     {
                         'crawl': {'name': '', 'version': '1.1.1.1'},
@@ -89,11 +97,15 @@ class excutor_cls:
                         'parsing_data': [],
                     }
                 }
+        self.tb.insert(task)#将抓取任务收集到数据库，单独的进程负责将数据库的抓取任务发送到中间层
+        #print ('crrawl_size',queue.qsize())
         #task.update(dict)  # 有值则更新，没值则默认
-        self.send(task)
+        #self.send(task)
         while True:
             # 从中间层获得topc = 'JM_Crawl_Result'+'guid' 的任务
-            task = self.Access_to_task('get_task', next_topic)#????? + task['guid']
+            #查表
+            task = self.tb.find_one({'topic':next_topic})
+            self.tb.remove({'topic':next_topic})#获取解析任务并从数据表中删除
             if task:
                 return task
             else:
@@ -101,12 +113,14 @@ class excutor_cls:
 
 
     def send(self,task):#将任务添加到中间层的接口
-        self.socket_add.send_json(task)
+        recv = self.socket_add.send_json(task)
+        print(recv)
         while True:  # 服务器中断会一直尝试重连
             socks = dict(self.poll1.poll(3000))
             if socks.get(self.socket_add) == zmq.POLLIN:
                 break
             else:#尝试重连
+                time.sleep(0.1)
                 self.socket_add.setsockopt(zmq.LINGER, 0)
                 self.socket_add.close()
                 self.poll1.unregister(self.socket_add)
@@ -147,7 +161,7 @@ class excutor_cls:
 
 if __name__ =='__main__':
 
-    parsing()
+
     #task = t.Access_to_task('get_task','',count=1)[0]
     #print (task)
     #t.catcher_interface(task)#抓取任务接口，因为本地任务是相同类型任务的集合，所以此接口内部一次只取一个任务，然后分解并发

@@ -79,14 +79,13 @@ class mongo_scan:
             self.aadd_job(result)
         #然后将找到为加入工作队列的任务加入工作队列
     def aadd_job(self,task):#增加作业
-
         id = ':'.join([task[setting.ROW_TOPIC], str(task[setting.ROW_GUID])])
         print ("****add",id)
         if task['topic']:#周期性任务
             print ("周期性任务")
-            self.scheduler.add_job(func=aps_test, args=('循环任务',task),trigger='interval',
-                                  seconds=3,id=id)
-            pass
+            self.scheduler.add_job(func=aps_test, args=('循环任务', task), trigger='interval',
+                                   seconds=task['interval'], id=id)
+
         elif task['topic'] == 2:#定时性任务
            self.scheduler.add_job(func=aps_test, args=(task,), trigger='cron', start_date=task['time'],
                                    second=task['interval'],id = id )
@@ -103,11 +102,10 @@ class mongo_scan:
         id = ':'.join([task[setting.ROW_TOPIC],str(task[setting.ROW_GUID])])
         print("****add", id)
         if task[setting.ROW_TOPIC]:  # 周期性任务
-
             print("周期性任务")
             try:
                 self.scheduler.add_job(func=aps_test, args=('循环任务', task), trigger='interval',
-                              seconds=3, id=id)
+                                       seconds=task['interval'], id=id)
             except:
                 ret = False
 

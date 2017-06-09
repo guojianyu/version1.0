@@ -18,7 +18,16 @@ JOB_COLL = 'server_job'#aps储存作业的集合
 
 
 
-TASK_STATUS  = {'WAIT':0,'READY':1,'EXCUTE':2,'TIMEOUT':3,'DELETE':4,'FINISH':5}#0等待，1：进入就绪队列，2：执行中，3：超时，4：删除 5：完成
+#属性状态码含义
+STATUS_DELAY = 0  # 任务处于等待状态
+STATUS_READY = 1  # 任务处于就绪状态，可以执行
+STATUS_EXCUTING = 2  # 任务正在执行
+STATUS_TIMEOUT = 3  # 任务超时
+STATUS_DELETED = 4  # 任务处于删除状态，不再被扫描
+STATUS_FINISH = 5  # 任务完成，控制权交回队列
+
+
+
 
 DOWN_LOGO = {'down':["jd_task_kind",'sku1'],'notdown':['sku2',]}
 

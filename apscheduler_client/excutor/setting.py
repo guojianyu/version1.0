@@ -58,7 +58,7 @@ LOCAL_TASK_LIST = (UPDATE_TASK_LIST,UPDATE_MUCH_TASKINFO,UPLOAD_CLIENT_STATUS,
 
 
 """本地任务时间的设定"""
-SCAN_TASK_TIME = 10 #扫描总任务队列的时间
+SCAN_TASK_TIME = 1 #扫描总任务队列的时间
 UPDATE_TASK_LIST_TIME = 5# 更新任务列表的时间单位是秒
 UPDATE_MUCH_TASKINFO_TIME = 600 #客户端回报任务信息的时间,这个时间不应该小于任务的超时时间
 UPLOAD_CLIENT_STATUS_TIME = (3600*12) #客户端更新设备信息的时间，12h更新一次
@@ -73,3 +73,8 @@ PUSH_PORT = '5599'#客户端向中间层推任务的端口
 
 
 SERVER_PORT = '8989'
+EXCUTOR_PORT = "6666"#执行器向中间层申请任务的端口
+
+CENTER_PORT = '5599'#调度中心向中间层添加任务的端口
+
+LOCAL_TASK_PORT = '7777'#向中间层添加本地任务的端口

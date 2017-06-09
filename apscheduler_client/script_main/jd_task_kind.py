@@ -10,6 +10,22 @@ from center_layer.center_interface._interface import *
 class jd_task_kind:
 
     @classmethod
+    def updateDict(cls,args):
+        basic_task = {'device': {'type': '', 'version': '127.22', 'id': ''},
+                      'guid': args['guid'],
+                      'time': args['time'],  # time.time(),
+                      'timeout': 1200,
+                      'topic': 'jd_task_kind',
+                      'interval': 86400,  # 任务执行周期间隔时间
+                      'suspend': 0,  # 暂停标识
+                      'status': 0,
+                      'body': {
+                          'kind': args['body']['kind'], 'platform': args['body']['platform'], 'sort': args['body']['sort'],
+                            }
+                      }
+        return basic_task
+
+    @classmethod
     def generateTask(cls):
         tasks=[]
         kinds=[]
@@ -41,19 +57,31 @@ class jd_task_kind:
                           'kind': '', 'platform': '', 'sort': '',
                         }
         }
-        sortlist = ['sort_totalsales15_desc','sort_rank_asc']
-        platformlist = ['jd_app','jd_web']
+        sortlist = ['sort_totalsales15_desc','sort_rank_asc',1,None]#pc/mobile
+     #   platformlist = ['jd_app','jd_web']
         for i in range(len(kinds)):
-            for index1, item1 in enumerate(sortlist):
-                for index2, item2 in enumerate(platformlist):
-                    guid = str(uuid.uuid1())  # 根据时间戳生成随机的uuid
-                    dictUpdate={'guid':guid,'time':time.time(),'body':{'kind':kinds[i],'platform':item1,'sort':item2}}
-                    basic_task.update(dictUpdate)
+            for index2, item2 in enumerate(sortlist):
+                guid = str(uuid.uuid1())  # 根据时间戳生成随机的uuid
+                if item2 =='sort_totalsales15_desc':
+                    dictUpdate={'guid':guid,'time':time.time(),'body':{'kind':kinds[i],'platform':'jd_web','sort':item2}}
+                    basic_task=cls.updateDict(dictUpdate)
+                    tasks.append(basic_task)
+                elif item2 == 'sort_rank_asc' and (kinds[i]=='9987,830,867' or kinds[i]== '9987,830,866' or kinds[i]=='9987,653,655'):
+                    dictUpdate = {'guid': guid, 'time': time.time(),'body': {'kind': kinds[i], 'platform': 'jd_web', 'sort': item2}}
+                    basic_task=cls.updateDict(dictUpdate)
+                    tasks.append(basic_task)
+                elif item2 == 1:
+                    dictUpdate = {'guid': guid, 'time': time.time(),'body': {'kind': kinds[i], 'platform': 'jd_app', 'sort': item2}}
+                    basic_task=cls.updateDict(dictUpdate)
+                    tasks.append(basic_task)
+                elif item2 is None:
+                    dictUpdate = {'guid': guid, 'time': time.time(),'body': {'kind': kinds[i], 'platform': 'jd_app', 'sort': item2}}
+                    basic_task=cls.updateDict(dictUpdate)
                     tasks.append(basic_task)
         return tasks
 
     @classmethod
-    def getMaxPage(cls, task):
+    def getMaxPage(cls, task,obj):
         platform = task['body']['platform']
         kind = task['body']['kind']
         sort = task['body']['sort']
@@ -73,8 +101,12 @@ class jd_task_kind:
             myheader['referer'] = 'https://list.jd.com/list.html?cat=' + kind
             myheader['user-agent'] = jd_tools.get_web_useragent()
          #   myheader['cookie'] = jd_tools.get_jd_web_cookie()
-            r = requests.get(url, headers = myheader)
-            urldata = r.text
+           # r = requests.get(url, headers = myheader,timeout=30)
+            arg = {'urls': [{'url': url, 'method': 'GET', 'header': myheader}], 'guid': task['guid']}
+            ptask = obj.interface(arg)
+            print("run3++++++++++++")
+            urldata = ptask[0]['body']['result'][0]['html']
+           # urldata = r.text
             rst = re.search(r'class=\"fp-text\"', urldata)
             if rst is not None:
                 strEndPos = rst.end()
@@ -94,10 +126,13 @@ class jd_task_kind:
             }
            # myheader['origin'] = 'https://so.m.jd.com'
           #  myheader['referer'] = 'https://so.m.jd.com/category/all.html'
-            myheader['user_agent'] = jd_tools.get_app_useragent()
+            myheader['user-agent'] = jd_tools.get_app_useragent()
            # myheader['cookie'] = jd_tools.get_jd_app_cookie()
-            r = requests.get(url, headers = myheader)
-            urldata = r.text
+            print ("jin==============")
+            arg = {'urls': [{'url':url,'method':'GET','header':myheader}], 'guid': task['guid']}
+            ptask = obj.interface(arg)
+            print("run3++++++++++++")
+            urldata = ptask[0]['body']['result'][0]['html']
             rst = re.search(r'wareCount', urldata)
             if rst is not None:
                 strEndPos = rst.end()
@@ -110,12 +145,12 @@ class jd_task_kind:
         return totalPage
 
     @classmethod
-    def get_urls(cls,task):
+    def get_urls(cls,task,obj):
         platform = task['body']['platform']
         kind = task['body']['kind']
         sort = task['body']['sort']
         urlList=[]
-        maxpage = cls.getMaxPage(task)
+        maxpage = cls.getMaxPage(task,obj)
         page = 1
         if platform == 'jd_web':
             url = 'https://list.jd.com/list.html?'
@@ -209,38 +244,49 @@ class jd_task_kind:
             charStr2 = '京东下载页'
             charStr3 = '专业网上购物平台品质保障'
             if html == constStr1:
+                print ("fangpa**********constStr1")
                 isAntiSpier = True
             if html == constStr2:
+                print("fangpa**********constStr2")
                 isAntiSpier = True
             if html.find(charStr1) is not -1:
+                print("fangpa**********charStr1")
                 isAntiSpier = True
             if html.find(charStr2) is not -1:
+                print("fangpa**********charStr2")
                 isAntiSpier = True
             if html.find(charStr3) is not -1:
+                print("fangpa**********charStr3")
                 isAntiSpier = True
         return isAntiSpier
 
     @classmethod
     def run(cls,task):
+        print ("run+++++++++++++")
         obj = excutor_cls()
-        urls = cls.get_urls(task)
+        print ("run1+++++++++++")
+        urls = cls.get_urls(task,obj)
+        print ("run2++++++++++++")
         arg = {'urls':urls,'guid':task['guid']}
         ptask = obj.interface(arg)
-        #print(ptask,"*************ptask")
-        result={'guid':task['guid'],'result':[],'data':[],'topic':task['topic'],'upload_flag':0}
+        print ("run3++++++++++++")
+       # print (ptask,"*************ptask")
+        zresult={'guid':task['guid'],'status':0,'result':[],'data':[]}
         if ptask:
+            print ("run4++++++++++++++")
             results = ptask[0]['body']['result']
             for index, _result in enumerate(results):
+                print ("loop++++",index)
                 if cls.isAntiSpider(_result['html'], _result):
-                    result['result'].append({'platform':_result['url']['platform'],'sort':_result['url']['sort'],'kind':_result['url']['kind'],'page':_result['url']['page'],'html':'isAntiSpider'})
+                    zresult['result'].append({'platform':_result['url']['platform'],'sort':_result['url']['sort'],'kind':_result['url']['kind'],'page':_result['url']['page'],'html':'isAntiSpider'})
                     continue
                 data = cls.parser(_result['html'],_result)
                 if data:
-                    result['result'].append({'platform': _result['url']['platform'], 'sort': _result['url']['sort'],'kind': _result['url']['kind'], 'page': _result['url']['page'],'html': 'has parsed'})
-                    result['data'].append(data)
+                    zresult['result'].append({'platform': _result['url']['platform'], 'sort': _result['url']['sort'],'kind': _result['url']['kind'], 'page': _result['url']['page'],'html': 'has parsed'})
+                    zresult['data'].append(data)
                 else:
-                    result['result'].append({'platform': _result['url']['platform'], 'sort': _result['url']['sort'],'kind': _result['url']['kind'], 'page': _result['url']['page'],'html':_result['html']})
-            obj.inter_obj.upload_data(result)
+                    zresult['result'].append({'platform': _result['url']['platform'], 'sort': _result['url']['sort'],'kind': _result['url']['kind'], 'page': _result['url']['page'],'html':_result['html']})
+            obj.inter_obj.upload_data(zresult)
       #  return data
 
     @classmethod
@@ -287,6 +333,10 @@ class jd_task_kind:
 
 
 if __name__ == '__main__':
+    obj = jd_task_kind()
+    ret = obj.generateTask()
+    print (ret)
+    """
     task = {'device':{'type': '', 'version': '127.22', 'id': ''},
         'guid': '9a4e4a10-45d6-11e7-9169-a860b60c7382',
         'time': time.time(),
@@ -305,3 +355,4 @@ if __name__ == '__main__':
     print (ret)
     obj = jd_task_kind()
     obj.run(task)
+    """

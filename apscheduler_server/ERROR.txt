@@ -1,0 +1,120 @@
+
+2017-06-09 14:22:57 base.py[line:131] ERROR Job "timeout_cute (trigger: interval[0:00:01], next run at: 2017-06-09 14:22:57 CST)" raised an exception
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/apscheduler/executors/base.py", line 125, in run_job
+    retval = job.func(*job.args, **job.kwargs)
+  File "/Users/cn/Desktop/apscheduler_delay/apscheduler_server/aps_server.py", line 83, in timeout_cute
+    if c_task['status'] < 3:# 任务超时
+TypeError: 'NoneType' object is not subscriptable
+2017-06-09 14:22:57 base.py[line:131] ERROR Job "timeout_cute (trigger: interval[0:00:01], next run at: 2017-06-09 14:22:58 CST)" raised an exception
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/apscheduler/executors/base.py", line 125, in run_job
+    retval = job.func(*job.args, **job.kwargs)
+  File "/Users/cn/Desktop/apscheduler_delay/apscheduler_server/aps_server.py", line 83, in timeout_cute
+    if c_task['status'] < 3:# 任务超时
+TypeError: 'NoneType' object is not subscriptable
+2017-06-09 14:22:58 base.py[line:131] ERROR Job "timeout_cute (trigger: interval[0:00:01], next run at: 2017-06-09 14:22:59 CST)" raised an exception
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/apscheduler/executors/base.py", line 125, in run_job
+    retval = job.func(*job.args, **job.kwargs)
+  File "/Users/cn/Desktop/apscheduler_delay/apscheduler_server/aps_server.py", line 83, in timeout_cute
+    if c_task['status'] < 3:# 任务超时
+TypeError: 'NoneType' object is not subscriptable
+2017-06-09 14:22:59 base.py[line:131] ERROR Job "timeout_cute (trigger: interval[0:00:01], next run at: 2017-06-09 14:23:00 CST)" raised an exception
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/apscheduler/executors/base.py", line 125, in run_job
+    retval = job.func(*job.args, **job.kwargs)
+  File "/Users/cn/Desktop/apscheduler_delay/apscheduler_server/aps_server.py", line 83, in timeout_cute
+    if c_task['status'] < 3:# 任务超时
+TypeError: 'NoneType' object is not subscriptable
+2017-06-09 14:23:00 base.py[line:131] ERROR Job "timeout_cute (trigger: interval[0:00:01], next run at: 2017-06-09 14:23:01 CST)" raised an exception
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/apscheduler/executors/base.py", line 125, in run_job
+    retval = job.func(*job.args, **job.kwargs)
+  File "/Users/cn/Desktop/apscheduler_delay/apscheduler_server/aps_server.py", line 83, in timeout_cute
+    if c_task['status'] < 3:# 任务超时
+TypeError: 'NoneType' object is not subscriptable
+2017-06-09 14:23:01 base.py[line:131] ERROR Job "timeout_cute (trigger: interval[0:00:01], next run at: 2017-06-09 14:23:02 CST)" raised an exception
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/apscheduler/executors/base.py", line 125, in run_job
+    retval = job.func(*job.args, **job.kwargs)
+  File "/Users/cn/Desktop/apscheduler_delay/apscheduler_server/aps_server.py", line 83, in timeout_cute
+    if c_task['status'] < 3:# 任务超时
+TypeError: 'NoneType' object is not subscriptable
+2017-06-09 14:23:02 base.py[line:131] ERROR Job "timeout_cute (trigger: interval[0:00:01], next run at: 2017-06-09 14:23:03 CST)" raised an exception
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/apscheduler/executors/base.py", line 125, in run_job
+    retval = job.func(*job.args, **job.kwargs)
+  File "/Users/cn/Desktop/apscheduler_delay/apscheduler_server/aps_server.py", line 83, in timeout_cute
+    if c_task['status'] < 3:# 任务超时
+TypeError: 'NoneType' object is not subscriptable
+2017-06-09 14:23:03 base.py[line:131] ERROR Job "timeout_cute (trigger: interval[0:00:01], next run at: 2017-06-09 14:23:04 CST)" raised an exception
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/apscheduler/executors/base.py", line 125, in run_job
+    retval = job.func(*job.args, **job.kwargs)
+  File "/Users/cn/Desktop/apscheduler_delay/apscheduler_server/aps_server.py", line 83, in timeout_cute
+    if c_task['status'] < 3:# 任务超时
+TypeError: 'NoneType' object is not subscriptable
+2017-06-09 14:58:26 base.py[line:131] ERROR Job "timeout_cute (trigger: interval[0:00:10], next run at: 2017-06-09 14:58:36 CST)" raised an exception
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/apscheduler/executors/base.py", line 125, in run_job
+    retval = job.func(*job.args, **job.kwargs)
+  File "/Users/cn/Desktop/apscheduler_delay/apscheduler_server/aps_server.py", line 82, in timeout_cute
+    if c_task['status'] < 3:# 任务超时
+TypeError: 'NoneType' object is not subscriptable
+2017-06-09 14:58:36 base.py[line:131] ERROR Job "timeout_cute (trigger: interval[0:00:10], next run at: 2017-06-09 14:58:46 CST)" raised an exception
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/apscheduler/executors/base.py", line 125, in run_job
+    retval = job.func(*job.args, **job.kwargs)
+  File "/Users/cn/Desktop/apscheduler_delay/apscheduler_server/aps_server.py", line 82, in timeout_cute
+    if c_task['status'] < 3:# 任务超时
+TypeError: 'NoneType' object is not subscriptable
+2017-06-09 14:58:46 base.py[line:131] ERROR Job "timeout_cute (trigger: interval[0:00:10], next run at: 2017-06-09 14:58:56 CST)" raised an exception
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/apscheduler/executors/base.py", line 125, in run_job
+    retval = job.func(*job.args, **job.kwargs)
+  File "/Users/cn/Desktop/apscheduler_delay/apscheduler_server/aps_server.py", line 82, in timeout_cute
+    if c_task['status'] < 3:# 任务超时
+TypeError: 'NoneType' object is not subscriptable
+2017-06-09 14:58:56 base.py[line:131] ERROR Job "timeout_cute (trigger: interval[0:00:10], next run at: 2017-06-09 14:59:06 CST)" raised an exception
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/apscheduler/executors/base.py", line 125, in run_job
+    retval = job.func(*job.args, **job.kwargs)
+  File "/Users/cn/Desktop/apscheduler_delay/apscheduler_server/aps_server.py", line 82, in timeout_cute
+    if c_task['status'] < 3:# 任务超时
+TypeError: 'NoneType' object is not subscriptable
+2017-06-09 14:59:06 base.py[line:131] ERROR Job "timeout_cute (trigger: interval[0:00:10], next run at: 2017-06-09 14:59:16 CST)" raised an exception
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/apscheduler/executors/base.py", line 125, in run_job
+    retval = job.func(*job.args, **job.kwargs)
+  File "/Users/cn/Desktop/apscheduler_delay/apscheduler_server/aps_server.py", line 82, in timeout_cute
+    if c_task['status'] < 3:# 任务超时
+TypeError: 'NoneType' object is not subscriptable
+2017-06-09 14:59:16 base.py[line:131] ERROR Job "timeout_cute (trigger: interval[0:00:10], next run at: 2017-06-09 14:59:26 CST)" raised an exception
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/apscheduler/executors/base.py", line 125, in run_job
+    retval = job.func(*job.args, **job.kwargs)
+  File "/Users/cn/Desktop/apscheduler_delay/apscheduler_server/aps_server.py", line 82, in timeout_cute
+    if c_task['status'] < 3:# 任务超时
+TypeError: 'NoneType' object is not subscriptable
+2017-06-09 14:59:26 base.py[line:131] ERROR Job "timeout_cute (trigger: interval[0:00:10], next run at: 2017-06-09 14:59:36 CST)" raised an exception
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/apscheduler/executors/base.py", line 125, in run_job
+    retval = job.func(*job.args, **job.kwargs)
+  File "/Users/cn/Desktop/apscheduler_delay/apscheduler_server/aps_server.py", line 82, in timeout_cute
+    if c_task['status'] < 3:# 任务超时
+TypeError: 'NoneType' object is not subscriptable
+2017-06-09 14:59:36 base.py[line:131] ERROR Job "timeout_cute (trigger: interval[0:00:10], next run at: 2017-06-09 14:59:46 CST)" raised an exception
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/apscheduler/executors/base.py", line 125, in run_job
+    retval = job.func(*job.args, **job.kwargs)
+  File "/Users/cn/Desktop/apscheduler_delay/apscheduler_server/aps_server.py", line 82, in timeout_cute
+    if c_task['status'] < 3:# 任务超时
+TypeError: 'NoneType' object is not subscriptable
+2017-06-09 14:59:46 base.py[line:131] ERROR Job "timeout_cute (trigger: interval[0:00:10], next run at: 2017-06-09 14:59:56 CST)" raised an exception
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/apscheduler/executors/base.py", line 125, in run_job
+    retval = job.func(*job.args, **job.kwargs)
+  File "/Users/cn/Desktop/apscheduler_delay/apscheduler_server/aps_server.py", line 82, in timeout_cute
+    if c_task['status'] < 3:# 任务超时
+TypeError: 'NoneType' object is not subscriptable

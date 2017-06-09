@@ -1,2 +1,0 @@
-Mon, 05 Jun 2017 16:23:17 connectionpool.py[line:809] DEBUG Starting new HTTPS connection (1): so.m.jd.com
-Mon, 05 Jun 2017 16:23:17 connectionpool.py[line:400] DEBUG https://so.m.jd.com:443 "GET /products/9987-830-866.html HTTP/1.1" 200 None

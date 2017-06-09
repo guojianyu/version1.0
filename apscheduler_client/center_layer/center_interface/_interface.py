@@ -101,7 +101,9 @@ class oprate_task_job:
                 self.socket.send(json.dumps(mes).encode('utf-8'))
 
     def recv(self):
-        return self.socket.recv_json()
+        data = self.socket.recv_json()
+        self.socket.close()
+        return data
 
     def write_log(self,arg):#写日志 arg的格式 {'level':,'content':....}level是写扫描类型的日志，content是日志内容
         level= arg['level']#得到日志等级
@@ -123,12 +125,10 @@ class oprate_task_job:
 if __name__ == "__main__":
 
 
-
     level = ['info','debug','warning','error']
-
     task = {"device":
                 {'type': "", 'version': '127.22', 'id': ''},
-            'guid': 14, 'time': time.time(), 'timeout': 40, 'topic': 'jd_task_kind',
+            'guid': 209, 'time': time.time(), 'timeout': 40, 'topic': 'jd_task_kind',
             'interval': 6000,  # 任务执行周期间隔时间
             'suspend': 0,  # 暂停标识
             'status': 0,
@@ -151,7 +151,7 @@ if __name__ == "__main__":
             }}
 
     obj = oprate_task_job(9995)
-    arg = {'level':'info','content':'aps_all_copy'}
+    #arg = {'level':'info','content':'aps_all_copy'}
     ret = obj.add_task(task)
     print (ret)
 

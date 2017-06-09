@@ -61,7 +61,6 @@ class server:
                         except:
                             pass
                         task['status'] = 0
-
                         self.result['content'].append({'action': 'add', "task": task})  # 将任务添加到回报数据中
                     if tmtask_ids.count() < setting.DOWN_COUNT['down']- item['count']:
                         task_ids = self.db[queued_name].find().limit(setting.DOWN_COUNT['down']- item['count']-tmtask_ids.count())
@@ -101,11 +100,12 @@ class server:
         for task in tasks:
             #如果上传的任务的设备与服务器所分配的任务设备id一致则接受数据或其他处理，
             tmp = self.db[setting.TASKS_LIST].find_one({'guid':task['guid']})
-            if message['device']['id'] == tmp['device']['id']:
-                result =self.db[setting.TASKS_LIST].find_and_modify(query={'guid': task['guid']},
-                                               update={'$set':task})
+            if tmp:
+                if message['device']['id'] == tmp['device']['id']:
+                    result =self.db[setting.TASKS_LIST].find_and_modify(query={'guid': task['guid']},
+                                                   update={'$set':task})
 
-                #self.db[setting.TASKS_LIST].update({'guid':task['guid']},task)#客户端上传的任务状态更新到总任务链表
+                    #self.db[setting.TASKS_LIST].update({'guid':task['guid']},task)#客户端上传的任务状态更新到总任务链表
 
 
     def upload_client_data(self,**message):#客户端回报数据,客户端的上传数据都为这个接口
@@ -125,6 +125,7 @@ class server:
 
         pass
     def upload_client_status(self,**message):#客户端上传状态主要是cpu和硬件信息的上报
+
         system_data = message['body']['client_status']
         sys_info = system_data['sysinfo']#客户端的详细硬件信息
         time = system_data['time']#客户端获取硬件信息的时间
@@ -155,6 +156,8 @@ class server:
                 ret = getattr(self, message['command']['action'])  # 获取的是个对象
                 ret(**message)
                 self.send(self.result)
+            else:
+                time.sleep(0.1)
 
 
 def main():

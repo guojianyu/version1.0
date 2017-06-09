@@ -194,14 +194,14 @@ class server_job:
         id = ':'.join([task[setting.ROW_TOPIC], str(task[setting.ROW_GUID])])
         task['time'] = self.time_datetime(task['time'])
         if task['topic']:  # 一次性任务
+            print ('addd_job')
             """
             scheduler.add_job(func=timeout_cute, args=(task,), trigger='cron', second='*/5',
                                                  id=id)  # 每5s执行一次
             """
             try:
-                scheduler.add_job(func=timeout_cute, args=(task,),trigger='interval',
-                                  next_run_time=task['time']+datetime.timedelta(seconds=task['timeout']),
-                                  id=id)
+                scheduler.add_job(func=timeout_cute, args=(task,),trigger='interval',seconds=task['interval'],
+                                  next_run_time=task['time'],id=id)
             except:
                 pass
         elif task['topic'] == 2:  # 定时性任务
@@ -218,6 +218,7 @@ class server_job:
                 pass
     """start操作作业的外部接口"""
     def add_job(self, mes):  # 增加作业对外接口
+
         task = mes['task']
         ret = True
         # 通过task 的topic确定任务需要调用
@@ -229,14 +230,22 @@ class server_job:
         #id = task['topic'] + ':' + str(task['guid'])
         id = ':'.join([task[setting.ROW_TOPIC],str(task[setting.ROW_GUID])])
         print("****add", id)
+        print("周期性任务")
         if task[setting.ROW_TOPIC]:  # 周期性任务
-
-            print("周期性任务")
             try:
+                scheduler.add_job(func=timeout_cute, args=(task,), trigger='interval',
+                              seconds=task['interval'], id=id)
+            except:
+                pass
+
+            """
+            try:
+
                 scheduler.add_job(func=aps_test, args=('循环任务', id), trigger='interval',
                               seconds=3, id=id)
             except:
                 ret = False
+            """
 
         elif task[setting.ROW_TOPIC] == 2:  # 定时性任务
             try:

@@ -120,8 +120,8 @@ if __name__ == "__main__":
     level = ['info','debug','warning','error']
     task = {"device":
                 {'type': "", 'version': '127.22', 'id': ''},
-            'guid': '9a4e4a10-45d6-11e7-9169-a860b60c7377', 'time': time.time(), 'timeout': 40000, 'topic': 'jd_task_kind',
-            'interval': 6000,  # 任务执行周期间隔时间
+            'guid': '9a4e4a10-45d6-11e7-9169-a860b60c7377', 'time': time.time(), 'timeout': 10, 'topic': 'jd_task_kind',
+            'interval': 10,  # 任务执行周期间隔时间
             'suspend': 0,  # 暂停标识
             'status': 0,
 

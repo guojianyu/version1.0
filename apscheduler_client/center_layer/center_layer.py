@@ -29,13 +29,16 @@ class work:
         self.socket.connect("tcp://localhost:"+center_setting.CENTER_PORT)
 
         """本地任务进入中间层的端口"""
+        context = zmq.Context()
         self.socket_local = context.socket(zmq.REP)
         self.socket_local.bind("tcp://*:"+center_setting.LOCAL_TASK_PORT)
         """绑定执行器"""
+        context = zmq.Context()
         self.socket_excutor = context.socket(zmq.REP)
         self.socket_excutor.bind("tcp://*:"+center_setting.EXCUTOR_PORT)
 
         """外部通过中间层修改客户端作业和总任务列表的端口"""
+        context = zmq.Context()
         self.socket_inter = context.socket(zmq.REP)
         self.socket_inter.bind("tcp://*:"+center_setting.CENTER_INTERFACE_PORT)
         #用于接受数据

@@ -17,6 +17,7 @@ local_task = {
                                                     'proxymode':'auto','encode':'utf-8',
                                                     'lib':'aiohttp','max_retry':0,'bulk':False,
                                                     'cookie':'','debug':False,'usephantomjs':False,
+                                                    'save_version':''#保存器的版本
 
                                                },
                                     'result':[],#{'url': '', 'time': '', 'html': '', 'error': '', 'proxy': '', 'retry': 0, 'headers': '', 'other': '', 'sucess': False, 'platform': ''}
